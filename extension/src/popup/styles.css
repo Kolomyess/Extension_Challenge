@@ -1,0 +1,66 @@
+body {
+  margin: 0;
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.popup {
+  width: 320px;
+  padding: 18px;
+
+  background: #ffffff;
+  color: #1f1f29;
+}
+
+.popup h1 {
+  margin: 0 0 16px;
+
+  font-size: 18px;
+}
+
+.popup label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  margin-bottom: 14px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.popup select,
+.popup button {
+  width: 100%;
+  padding: 10px;
+
+  border: 1px solid #d8d8e0;
+  border-radius: 10px;
+
+  font: inherit;
+}
+
+.popup button {
+  margin-top: 4px;
+
+  background: #5b5fc7;
+  color: white;
+
+  border: none;
+
+  cursor: pointer;
+}
+
+.saved {
+  margin: 12px 0 0;
+
+  color: #147a42;
+
+  font-size: 13px;
+}
