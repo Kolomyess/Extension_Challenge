@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.ai.mock_analyzer import analyze_caption
+from app.ai.analyzer_service import analyzer_service
 from app.core.config import settings
 from app.meeting.meeting_manager import MeetingManager
 from app.websocket.connection_manager import ConnectionManager
@@ -52,29 +52,32 @@ async def websocket_endpoint(websocket: WebSocket):
             },
         )
 
-        print("[WebSocket] Mensagem inicial enviada ao cliente.", flush=True)
-
         while True:
             message = await websocket.receive_json()
-
-            print("[WebSocket] Mensagem recebida:", message, flush=True)
 
             message_type = message.get("type")
             payload = message.get("payload", {})
 
             if message_type == "caption.received":
-                print("[Meeting] Legenda recebida:", payload, flush=True)
+                speaker = payload.get("speaker", "Participante")
+                text = payload.get("text", "")
+
+                print(
+                    f"[Meeting] Legenda recebida de {speaker}: {text}",
+                    flush=True,
+                )
 
                 meeting_manager.add_caption(session_id, payload)
 
                 recent_captions = meeting_manager.get_recent_captions(session_id)
 
-                insights = analyze_caption(
+                insights = analyzer_service.analyze_caption(
                     caption=payload,
                     recent_captions=recent_captions,
                 )
 
-                print("[AI] Insights gerados:", insights, flush=True)
+                if insights:
+                    print(f"[AI] {len(insights)} insight(s) gerado(s).", flush=True)
 
                 for insight in insights:
                     await connection_manager.send_json(
@@ -85,7 +88,10 @@ async def websocket_endpoint(websocket: WebSocket):
                         },
                     )
 
-                    print("[WebSocket] Insight enviado:", insight, flush=True)
+                    print(
+                        f"[WebSocket] Insight enviado: {insight.get('title')}",
+                        flush=True,
+                    )
 
                 continue
 
