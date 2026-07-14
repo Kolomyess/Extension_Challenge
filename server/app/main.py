@@ -38,7 +38,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
     print("[WebSocket] Cliente conectado.", flush=True)
 
-    session_id = "default-session"
+    default_session_id = "default-session"
 
     try:
         await connection_manager.send_json(
@@ -47,7 +47,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 "type": "server.connected",
                 "payload": {
                     "message": "Conectado ao servidor FastAPI",
-                    "sessionId": session_id,
+                    "sessionId": default_session_id,
                 },
             },
         )
@@ -56,23 +56,26 @@ async def websocket_endpoint(websocket: WebSocket):
             message = await websocket.receive_json()
 
             message_type = message.get("type")
-            payload = message.get("payload", {})
+            payload = message.get("payload", {}) or {}
 
             if message_type == "caption.received":
-                speaker = payload.get("speaker", "Participante")
-                text = payload.get("text", "")
+                session_id = payload.get("sessionId", default_session_id)
+                caption = payload.get("caption", payload)
+
+                speaker = caption.get("speaker", "Participante")
+                text = caption.get("text", "")
 
                 print(
-                    f"[Meeting] Legenda recebida de {speaker}: {text}",
+                    f"[Meeting] Sessão {session_id} | {speaker}: {text}",
                     flush=True,
                 )
 
-                meeting_manager.add_caption(session_id, payload)
+                meeting_manager.add_caption(session_id, caption)
 
                 recent_captions = meeting_manager.get_recent_captions(session_id)
 
                 insights = analyzer_service.analyze_caption(
-                    caption=payload,
+                    caption=caption,
                     recent_captions=recent_captions,
                 )
 
@@ -96,6 +99,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 continue
 
             if message_type == "meeting.snapshot.requested":
+                session_id = payload.get("sessionId", default_session_id)
+
                 snapshot = meeting_manager.get_snapshot(session_id)
 
                 await connection_manager.send_json(

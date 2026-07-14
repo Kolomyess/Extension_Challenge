@@ -7,6 +7,31 @@ let websocketClient: WebSocketClient | null = null;
 let activeTeamsTabId: number | null = null;
 
 const pendingMessages: unknown[] = [];
+const tabSessionIds = new Map<number, string>();
+
+function createSessionId() {
+  if (crypto.randomUUID) {
+    return `teams-${crypto.randomUUID()}`;
+  }
+
+  return `teams-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function getSessionIdForTab(tabId: number) {
+  const existingSessionId = tabSessionIds.get(tabId);
+
+  if (existingSessionId) {
+    return existingSessionId;
+  }
+
+  const newSessionId = createSessionId();
+
+  tabSessionIds.set(tabId, newSessionId);
+
+  logger.info("Nova sessão criada:", newSessionId);
+
+  return newSessionId;
+}
 
 function sendToContentScript(message: unknown) {
   if (!activeTeamsTabId) {
@@ -93,6 +118,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message?.type === "backend.connect") {
+    if (sender.tab?.id) {
+      getSessionIdForTab(sender.tab.id);
+    }
+
     ensureConnection();
 
     sendResponse({
@@ -105,9 +134,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "caption.received") {
     ensureConnection();
 
+    const tabId = sender.tab?.id ?? activeTeamsTabId;
+
+    if (!tabId) {
+      sendResponse({
+        ok: false,
+        error: "Não foi possível identificar a aba do Teams"
+      });
+
+      return true;
+    }
+
+    const sessionId = getSessionIdForTab(tabId);
+
     const backendMessage = {
       type: "caption.received",
-      payload: message.payload
+      payload: {
+        sessionId,
+        caption: message.payload
+      }
     };
 
     const sent = websocketClient?.send(backendMessage) ?? false;
@@ -123,7 +168,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     sendResponse({
       ok: true,
-      sent
+      sent,
+      sessionId
     });
 
     return true;
