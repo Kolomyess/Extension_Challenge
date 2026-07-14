@@ -1,11 +1,12 @@
 from typing import Any
 
 from app.ai.mock_analyzer import analyze_caption as analyze_with_mock
+from app.core.config import settings
 
 
 class AnalyzerService:
     def __init__(self):
-        self.mode = "mock"
+        self.mode = settings.ANALYZER_MODE
 
     def analyze_caption(
         self,
