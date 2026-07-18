@@ -1,32 +1,108 @@
+# =========================
 # Python
+# =========================
+
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+
 .venv/
 venv/
+env/
+ENV/
+
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Arquivos de ambiente / chaves secretas
 .env
+.env.*
+server/.env
+server/.env.*
+!server/.env.example
+!.env.example
 
+
+# =========================
 # Node / React / Vite
-node_modules/
-dist/
-build/
-.env.local
-.env.development
-.env.production
+# =========================
 
-# Logs
-*.log
+node_modules/
+extension/node_modules/
+
+dist/
+extension/dist/
+
+build/
+extension/build/
+
+.vite/
+extension/.vite/
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# VS Code / Sistema
-.vscode/
+
+# =========================
+# Logs
+# =========================
+
+*.log
+logs/
+
+
+# =========================
+# Sistema operacional
+# =========================
+
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Cache
+
+# =========================
+# VS Code / Editor
+# =========================
+
+.vscode/
+.idea/
+
+
+# =========================
+# Arquivos temporários
+# =========================
+
 .cache/
-.pytest_cache/
-.mypy_cache/
+tmp/
+temp/
+
+
+# =========================
+# Banco de dados local, se usar depois
+# =========================
+
+*.sqlite
+*.sqlite3
+*.db
+
+
+# =========================
+# Dados grandes / datasets locais
+# =========================
+
+dataset/raw/
+datasets/raw/
+data/raw/
+
+*.csv
+*.xlsx
+*.xls
