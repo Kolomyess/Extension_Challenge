@@ -4,6 +4,7 @@ import type { CaptionMessage } from "../../shared/types/captions";
 import type { InsightMessage } from "../../shared/types/insights";
 import { AssistantPanel } from "./components/AssistantPanel";
 import { subscribeToOverlayEvents } from "./overlayEvents";
+import { applyTeamsPageOffset, clearTeamsPageOffset } from "./pageLayout";
 
 const MAX_CAPTIONS_VISIBLE = 20;
 const MAX_INSIGHTS_VISIBLE = 5;
@@ -63,6 +64,18 @@ export function OverlayApp() {
     });
   }, []);
 
+  useEffect(() => {
+    if (isPanelOpen) {
+      applyTeamsPageOffset();
+    } else {
+      clearTeamsPageOffset();
+    }
+
+    return () => {
+      clearTeamsPageOffset();
+    };
+  }, [isPanelOpen]);
+
   if (!isPanelOpen) {
     return (
       <button
@@ -72,7 +85,8 @@ export function OverlayApp() {
         aria-label="Abrir AI Sales Assistant"
         title="Abrir AI Sales Assistant"
       >
-        AI
+        <span className="asa-floating-icon">AI</span>
+        <span className="asa-floating-label">Abrir assistente</span>
       </button>
     );
   }

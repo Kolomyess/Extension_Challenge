@@ -3,10 +3,11 @@ from typing import Any
 
 from app.ai.llm_analyzer import analyze_caption_with_llm
 from app.ai.mock_analyzer import analyze_caption as analyze_with_mock
+from app.ai.relevance_filter import should_analyze_caption
 from app.core.config import settings
 
 
-LLM_COOLDOWN_SECONDS = 15
+LLM_COOLDOWN_SECONDS = 12
 
 
 class AnalyzerService:
@@ -30,6 +31,16 @@ class AnalyzerService:
         caption: dict[str, Any],
         recent_captions: list[dict[str, Any]] | None = None,
     ):
+        should_analyze, reason = should_analyze_caption(
+            caption=caption,
+            recent_captions=recent_captions,
+        )
+
+        if not should_analyze:
+            print(f"[AI] Fala ignorada: {reason}", flush=True)
+            return []
+
+        print(f"[AI] Fala relevante detectada: {reason}", flush=True)
         print(f"[AI] Modo ativo: {self.mode}", flush=True)
 
         if self.mode == "mock":
