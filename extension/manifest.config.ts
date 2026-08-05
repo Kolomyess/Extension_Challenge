@@ -16,7 +16,8 @@ export default defineManifest({
     "https://teams.live.com/*",
     "https://*.teams.live.com/*",
 
-    "https://sales-assistant-api-w34d.onrender.com/*"
+    "https://sales-assistant-api-w34d.onrender.com/*",
+    "wss://sales-assistant-api-w34d.onrender.com/*"
   ],
 
   action: {
