@@ -9,15 +9,14 @@ export default defineManifest({
 
   permissions: ["storage"],
 
-  host_permissions: [
+ host_permissions: [
   "https://teams.microsoft.com/*",
   "https://*.teams.microsoft.com/*",
   "https://teams.live.com/*",
   "https://*.teams.live.com/*",
-  "http://localhost:8000/*",
-  "http://127.0.0.1:8000/*",
-  "ws://localhost:8000/*",
-  "ws://127.0.0.1:8000/*"
+
+  "https://sales-assistant-api-w34d.onrender.com/*",
+  "wss://sales-assistant-api-w34d.onrender.com/*"
 ],
 
 
