@@ -4,21 +4,20 @@ export default defineManifest({
   manifest_version: 3,
 
   name: "AI Sales Assistant",
-  description: "Assistente inteligente para reuniões comerciais no Microsoft Teams.",
+  description:
+    "Assistente inteligente para reuniões comerciais no Microsoft Teams.",
   version: "0.1.0",
 
   permissions: ["storage"],
 
- host_permissions: [
-  "https://teams.microsoft.com/*",
-  "https://*.teams.microsoft.com/*",
-  "https://teams.live.com/*",
-  "https://*.teams.live.com/*",
+  host_permissions: [
+    "https://teams.microsoft.com/*",
+    "https://*.teams.microsoft.com/*",
+    "https://teams.live.com/*",
+    "https://*.teams.live.com/*",
 
-  "https://sales-assistant-api-w34d.onrender.com/*",
-  "wss://sales-assistant-api-w34d.onrender.com/*"
-],
-
+    "https://sales-assistant-api-w34d.onrender.com/*"
+  ],
 
   action: {
     default_popup: "src/popup/index.html"
